@@ -1,6 +1,6 @@
 {
     "name": "@grammyjs/router",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Router middleware for grammY",
     "main": "src/deps.node.js",
     "scripts": {
