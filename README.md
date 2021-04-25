@@ -1,5 +1,9 @@
 # Router middleware for grammY
 
+Check out [the official documentation](https://grammy.dev/plugins/router.html) for this plugin.
+
+## Quickstart
+
 A router lets you specify a number of middlewares, each of them identified by a string key. You can then pass a routing function that decides based on the context which middleware to choose by returning one of the keys.
 
 ```ts
