@@ -12,7 +12,7 @@
         "url": "git+https://github.com/grammyjs/router.git"
     },
     "files": [
-        "src/"
+        "out/"
     ],
     "keywords": [
         "router",
