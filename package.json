@@ -2,7 +2,7 @@
     "name": "@grammyjs/router",
     "version": "1.0.0",
     "description": "Router middleware for grammY",
-    "main": "src/mod.js",
+    "main": "src/deps.node.js",
     "scripts": {
         "build": "deno2node tsconfig.json",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,9 @@
         "type": "git",
         "url": "git+https://github.com/grammyjs/router.git"
     },
+    "files": [
+        "src/"
+    ],
     "keywords": [
         "router",
         "bot",
