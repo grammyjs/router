@@ -2,7 +2,7 @@
     "name": "@grammyjs/router",
     "version": "1.0.3",
     "description": "Router middleware for grammY",
-    "main": "src/deps.node.js",
+    "main": "out/deps.node.js",
     "scripts": {
         "build": "deno2node tsconfig.json",
         "test": "echo \"Error: no test specified\" && exit 1"
