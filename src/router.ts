@@ -80,7 +80,7 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
             .lazy(ctx => {
                 const route = this.router(ctx)
                 return (
-                    (route === undefined
+                    (route === undefined || !this.routeHandlers.has(route)
                         ? this.otherwiseHandler
                         : this.routeHandlers.get(route)) ?? []
                 )
