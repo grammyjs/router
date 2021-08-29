@@ -6,6 +6,8 @@ import {
     Context,
 } from './deps.deno.ts'
 
+type MaybePromise<T> = T | Promise<T>
+
 /**
  * A router lets you specify a number of middlewares, each of them identified by
  * a string key. You can then pass a routing function that decides based on the
@@ -45,7 +47,7 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
      * @param routeHandlers A number of middlewares
      */
     constructor(
-        private readonly router: (ctx: C) => string | undefined,
+        private readonly router: (ctx: C) => MaybePromise<string | undefined>,
         public routeHandlers = new Map<string, Middleware<C>>()
     ) {}
 
@@ -77,8 +79,8 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
 
     middleware(): MiddlewareFn<C> {
         return new Composer<C>()
-            .lazy(ctx => {
-                const route = this.router(ctx)
+            .lazy(async ctx => {
+                const route = await this.router(ctx)
                 return (
                     (route === undefined || !this.routeHandlers.has(route)
                         ? this.otherwiseHandler
