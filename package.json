@@ -1,7 +1,7 @@
 {
     "name": "@grammyjs/router",
     "description": "Router middleware for grammY",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "author": "KnorpelSenf",
     "license": "MIT",
     "engines": {
