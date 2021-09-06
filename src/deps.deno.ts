@@ -1,1 +1,1 @@
-export * from 'https://dsr.edjopato.de/grammy/^1.0.0/mod.ts'
+export * from 'https://lib.deno.dev/x/grammy@v1/mod.ts'
