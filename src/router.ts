@@ -1,12 +1,12 @@
 import {
-    Middleware,
-    MiddlewareObj,
-    MiddlewareFn,
     Composer,
     Context,
-} from './deps.deno.ts'
+    Middleware,
+    MiddlewareFn,
+    MiddlewareObj,
+} from "./deps.deno.ts";
 
-type MaybePromise<T> = T | Promise<T>
+type MaybePromise<T> = T | Promise<T>;
 
 /**
  * A router lets you specify a number of middlewares, each of them identified by
@@ -36,7 +36,7 @@ type MaybePromise<T> = T | Promise<T>
  * ```
  */
 export class Router<C extends Context> implements MiddlewareObj<C> {
-    private otherwiseHandler: Composer<C> | undefined
+    private otherwiseHandler: Composer<C> | undefined;
 
     /**
      * Constructs a router with a routing function and optionally some
@@ -48,7 +48,7 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
      */
     constructor(
         private readonly router: (ctx: C) => MaybePromise<string | undefined>,
-        public routeHandlers = new Map<string, Middleware<C>>()
+        public routeHandlers = new Map<string, Middleware<C>>(),
     ) {}
 
     /**
@@ -60,8 +60,8 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
      * @param middleware The middleware to register
      */
     route(route: string, ...middleware: Array<Middleware<C>>) {
-        this.routeHandlers.set(route, new Composer(...middleware))
-        return this
+        this.routeHandlers.set(route, new Composer(...middleware));
+        return this;
     }
 
     /**
@@ -73,20 +73,20 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
      * @param middleware Middleware to run if no route matches
      */
     otherwise(...middleware: Array<Middleware<C>>) {
-        this.otherwiseHandler = new Composer(...middleware)
-        return this
+        this.otherwiseHandler = new Composer(...middleware);
+        return this;
     }
 
     middleware(): MiddlewareFn<C> {
         return new Composer<C>()
-            .lazy(async ctx => {
-                const route = await this.router(ctx)
+            .lazy(async (ctx) => {
+                const route = await this.router(ctx);
                 return (
                     (route === undefined || !this.routeHandlers.has(route)
                         ? this.otherwiseHandler
                         : this.routeHandlers.get(route)) ?? []
-                )
+                );
             })
-            .middleware()
+            .middleware();
     }
 }

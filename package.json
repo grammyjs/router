@@ -22,15 +22,15 @@
         "grammy": "^1.0.0"
     },
     "devDependencies": {
-        "deno2node": "0.4.0"
+        "deno2node": "^1.3.0"
     },
     "files": [
         "out/"
     ],
-    "main": "out/router.js",
+    "main": "out/mod.js",
     "type": "commonjs",
     "exports": {
-        ".": "./out/router.js"
+        ".": "./out/mod.js"
     },
     "keywords": [
         "router",
