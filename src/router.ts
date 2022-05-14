@@ -36,6 +36,7 @@ type MaybePromise<T> = T | Promise<T>;
  * ```
  */
 export class Router<C extends Context> implements MiddlewareObj<C> {
+    public routeHandlers: Record<string, Middleware<C>>;
     private otherwiseHandler: Composer<C> | undefined;
 
     /**
@@ -48,8 +49,14 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
      */
     constructor(
         private readonly router: (ctx: C) => MaybePromise<string | undefined>,
-        public routeHandlers = new Map<string, Middleware<C>>(),
-    ) {}
+        routeHandlers:
+            | Record<string, Middleware<C>>
+            | Map<string, Middleware<C>> = {},
+    ) {
+        this.routeHandlers = routeHandlers instanceof Map
+            ? Object.fromEntries(routeHandlers.entries())
+            : { ...routeHandlers };
+    }
 
     /**
      * Registers new middleware for a given route. The intially supplied routing
@@ -60,8 +67,9 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
      * @param middleware The middleware to register
      */
     route(route: string, ...middleware: Array<Middleware<C>>) {
-        this.routeHandlers.set(route, new Composer(...middleware));
-        return this;
+        const composer = new Composer(...middleware);
+        this.routeHandlers[route] = composer;
+        return composer;
     }
 
     /**
@@ -73,20 +81,14 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
      * @param middleware Middleware to run if no route matches
      */
     otherwise(...middleware: Array<Middleware<C>>) {
-        this.otherwiseHandler = new Composer(...middleware);
-        return this;
+        return this.otherwiseHandler = new Composer(...middleware);
     }
 
     middleware(): MiddlewareFn<C> {
-        return new Composer<C>()
-            .lazy(async (ctx) => {
-                const route = await this.router(ctx);
-                return (
-                    (route === undefined || !this.routeHandlers.has(route)
-                        ? this.otherwiseHandler
-                        : this.routeHandlers.get(route)) ?? []
-                );
-            })
-            .middleware();
+        return new Composer<C>().route(
+            (ctx) => this.router(ctx),
+            this.routeHandlers,
+            this.otherwiseHandler,
+        ).middleware();
     }
 }
