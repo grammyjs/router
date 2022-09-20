@@ -10,8 +10,8 @@ type MaybePromise<T> = T | Promise<T>;
 
 /**
  * A router lets you specify a number of middlewares, each of them identified by
- * a string key. You can then pass a routing function that decides based on the
- * context which middleware to choose by returning one of the keys.
+ * a key. You can then pass a routing function that decides based on the context
+ * which middleware to choose by returning one of the keys.
  *
  * ```ts
  * const router = new Router(ctx => {
@@ -21,6 +21,7 @@ type MaybePromise<T> = T | Promise<T>;
  *
  * router.route('key',       ctx => { ... })
  * router.route('other-key', ctx => { ... })
+ * router.route(42,          ctx => { ... }) // numbers and symbols work
  * router.otherwise(ctx => { ... }) // called if no route matches
  *
  * bot.use(router)
@@ -36,7 +37,7 @@ type MaybePromise<T> = T | Promise<T>;
  * ```
  */
 export class Router<C extends Context> implements MiddlewareObj<C> {
-    public routeHandlers: Record<string, Middleware<C>>;
+    public routeHandlers: Record<PropertyKey, Middleware<C>>;
     private otherwiseHandler: Composer<C> | undefined;
 
     /**
@@ -48,10 +49,12 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
      * @param routeHandlers A number of middlewares
      */
     constructor(
-        private readonly router: (ctx: C) => MaybePromise<string | undefined>,
+        private readonly router: (
+            ctx: C,
+        ) => MaybePromise<PropertyKey | undefined>,
         routeHandlers:
-            | Record<string, Middleware<C>>
-            | Map<string, Middleware<C>> = {},
+            | Record<PropertyKey, Middleware<C>>
+            | Map<PropertyKey, Middleware<C>> = {},
     ) {
         this.routeHandlers = routeHandlers instanceof Map
             ? Object.fromEntries(routeHandlers.entries())
@@ -60,13 +63,13 @@ export class Router<C extends Context> implements MiddlewareObj<C> {
 
     /**
      * Registers new middleware for a given route. The intially supplied routing
-     * function may return this route as a string to select the respective
-     * middleware for execution for an incoming update.
+     * function may return this route to select the respective middleware for
+     * execution for an incoming update.
      *
      * @param route The route for which to register the middleware
      * @param middleware The middleware to register
      */
-    route(route: string, ...middleware: Array<Middleware<C>>) {
+    route(route: PropertyKey, ...middleware: Array<Middleware<C>>) {
         const composer = new Composer(...middleware);
         this.routeHandlers[route] = composer;
         return composer;
